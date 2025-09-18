@@ -129,17 +129,15 @@ r 0.518 0 1 cbr 1000 ------- 0 0.0 1.0 0 0
 
 1.  **Qual a relação entre o `link_delay` configurado no script e a latência medida no arquivo `.tr`?**
 
-    Com a análise do .tr, podemos verificar que o link_delay tem uma relação clara.
-
-    O link_delay, traduzido para uma expressão que facilita seu entendimento, seria "propagação". Ele vai nos dar a             informação do tempo entre os links, no nosso caso, a propagação no link entre os nós 1 e 2. O .tr nos dá várias           informações, não     apenas a de propagação; ele nos dá o escopo completo do delay, ajudando a identificar a demora em         alguns processos, como o de processamento ou o de envio do pacote. O de propagação, por sua vez, confirma a ligação         direta entre eles.
+    Com a análise do .tr, podemos verificar que o link_delay tem uma relação clara. O link_delay, traduzido para uma expressão que facilita seu entendimento, seria "propagação". Ele vai nos dar a informação do tempo entre os links, no nosso caso, a propagação no link entre os nós 1 e 2. O .tr nos dá várias informações, não apenas a de propagação; ele nos dá o escopo completo do delay, ajudando a identificar a demora em alguns processos. O principal deles, além da propagação, foi o atraso de transmissão (o tempo de envio do pacote), que se mostrou constante em 8ms. Esse valor, resultado do tamanho do pacote (1000 bytes) e da banda (1 Mbps), justifica a diferença exata entre a latência final e o link_delay configurado.
   
 3.  **Como a latência afeta a percepção do usuário em aplicações como VoIP ou jogos online?**
 
-    Foi introduzido aos alunos de redes dois conceitos, as aplicações elásticas e as em tempo real. As elásticas não são o     foco dessa resposta mas, resumidamente, são menos afetadas. As que entram em estado crítico com delay são as em tempo     real, elas sofrem pois os dados precisam chegar de forma segura, padronizada e sem atraso, caso nossa rede tenha algum     problema de atraso nas aplicações em tempo real vamos ter alguns problemas típicos. Em VoIP, quando sua tia do Acre         tentar se comunicar com um “Oi”, você poderá ouvir uma voz travada. Quando o assunto é jogos online, um simples clique     no botão pode demorar mais do que o esperado, assim, frustrando sua jogatina.
+    Foi introduzido aos alunos de redes dois conceitos, as aplicações elásticas e as em tempo real. As elásticas não são o foco dessa resposta mas, resumidamente, são menos afetadas. As que entram em estado crítico com delay são as em tempo real, elas sofrem pois os dados precisam chegar de forma segura, padronizada e sem atraso, caso nossa rede tenha algum problema de atraso nas aplicações em tempo real vamos ter alguns problemas típicos. Em VoIP, quando sua tia do Acre tentar se comunicar com um "Oi", você poderá ouvir uma voz travada. Quando o assunto é jogos online, um simples clique no botão pode demorar mais do que o esperado, assim, frustrando sua jogatina.
       
 4.  **Se o Dr. Martinez estivesse em Tóquio e o paciente em Manaus, qual seria o impacto na latência?**
 
-    Se a latência começasse a ser um empecilho levando em consideração o caso da telecirurgia, muitos fatores seriam           afetados. Começando com a visualização da cirurgia em vídeo HD, a maior probabilidade seria de atraso na imagem, isso     isolado parece não afetar tanto mas, entramos nos outros fatores. Com um atraso na imagem, o doutor sofre de movimentos     irregulares no sinal da sua mão, podendo ser fatal, junto de um áudio com delay, assim informações seriam imprecisas       no momento certo. Por último os batimentos do paciente, é a peça com menor prioridade de gravidade mas resulta em         perda de informações críticas.
+    Se a latência começasse a ser um empecilho levando em consideração o caso da telecirurgia, muitos fatores seriam afetados. Começando com a visualização da cirurgia em vídeo HD, a maior probabilidade seria de atraso na imagem, isso isolado parece não afetar tanto mas, entramos nos outros fatores. Com um atraso na imagem, o doutor sofre de movimentos irregulares no sinal da sua mão, podendo ser fatal, junto de um áudio com delay, assim informações seriam imprecisas no momento certo. Por último os batimentos do paciente, é a peça com menor prioridade de gravidade mas resulta em perda de informações críticas. Sabendo dessas variáveis, podemos ter certeza que uma cirurgia pode ser realizada apenas com a certeza de uma ótima estabilização na rota da rede.
 
 Sabendo dessas variáveis, podemos ter certeza que uma cirurgia pode ser realizada apenas com a certeza de uma ótima estabilização na rota da rede.
 
@@ -281,28 +279,29 @@ $ns run
 
 | Ping Nº | Timestamp Envio | Timestamp Recebimento | Latência (ms) | Observações sobre o Impacto do FTP |
 | :------ | :-------------- | :-------------------- | :------------ | :--------------------------------- |
-| 1       | 1.0             | 1041ms                | 41ms          | FTP "FRIO", Maior atraso na rede   |
-| 2       | 1.3             | 1040.6ms              | 40.6          | FTP "Quente" trazendo estabilidade |
-| 3       | 1.6             | 1040.3ms              | 40.3          |                                    |
-| 4       | 1.9             | 1040.2ms              | 40.2          |                                    |
-| 5       | 2.2             | 1040.2ms              | 40.2          |                                    |
-| 5       | 2.2             | 1040.2ms              | 40.2          |                                    |
-| 10      | 3.7             | 1040.2ms              | 40.2          |                                    |
-FTP 2-10 foi utilizado com intuito de manter atividade constante, o sistema não tinha gargalo.
+| 1       | 1.0             | 1041ms                | 326.2 ms      | O fluxo FTP já está ativo          |
+| 2       | 1.3             | 1040.6ms              | 328.9 ms      | O pacote Ping precisa esperar na   |
+|         |                 |                       |               | fila atrás dos  pacotes FTP        |                
+| 3       | 1.6             | 1040.3ms              | 328.9 ms      | A latência se mantém em um patamar |
+|         |                 |                       |               | extremamente alto, mostrando que a |
+|         |                 |                       |               | rede está sem responsividade       |
+| 4       | 1.9             | 1040.2ms              | 328.9 ms      | O padrão de alta latência continua |
+|         |                 |                       |               | enquanto o FTP estiver competindo  |
+|         |                 |                       |               | pelos recursos do link             |
 
 ### **7.3. Perguntas para Refletir e Discutir**
 
 1.  **Qual aplicação (FTP ou Ping) é mais sensível à latência? Por quê?**
 
-    O ping é como se fosse o rato da rede, ele é pequeno e consegue passar pelos espaços pequenos com uma velocidade           maior, a latência não irá influenciar tanto pelos detalhes citados. O FTP são transferências de arquivos normalmente       envolvendo Downloads ou Uploads, isso com certeza tem um peso bem maior que o ping. A lógica seguida seria dessa forma     então, temos o ping como nosso ratinho onde navega de forma facilitada e o FTP como nosso elefante, ou seja, uma           locomoção mais lenta.
+    O Ping é muito mais sensível à latência, e a nossa simulação deixou isso claro. Podemos usar a analogia do ratinho e       do elefante: o Ping é o nosso rato da rede, pequeno e ágil, cuja principal função é verificar o caminho         rapidamente. Qualquer atraso, como os +300ms que vimos, compromete totalmente sua missão. O FTP, por sua vez, é o nosso    elefante; sua missão é carregar um grande volume de dados (alto throughput). Ele é mais lento e menos ágil, então uma       latência maior não o impede de completar seu trabalho, apenas leva um pouco mais de tempo.
 
 2.  **Como o throughput do FTP foi afetado pela capacidade do link?**
 
-    Observando o gráfico novamente, a noção de que a capacidade do link não foi testada ao limite fica perceptível. O link     demonstrou ter capacidade de suportar a passagem dos pacotes, a latência tem uma variação muito baixa. Com isso em   '    mente posso afirmar que o FTP não sofreu com a capacidade do link.
+    Ainda que o FTP não tenha usado toda a capacidade de 10Mb do link, foi a disputa por essa capacidade que causou todo o problema. O fluxo de 3.72 Mbps foi o suficiente para criar um congestionamento e uma fila constante no roteador. Isso mostra que o link virou um gargalo: ele não conseguia processar os pacotes do FTP com rapidez suficiente para evitar que uma fila se formasse, e foram nessas filas que os pacotes de Ping ficaram presos, resultando no aumento drástico da latência.
 
 3.  **Em um cenário de telecirurgia, qual seria a prioridade: alto throughput para o vídeo HD (Pablo) ou alta responsividade para os comandos do bisturi (Flash)? Justifique.**
 
-    Podemos usar novamente a analogia do ratinho e do elefante, todos concordamos e é fato que vídeo HD, ainda mais ao         vivo, vai ter uma geração bem maior que comandos do bisturi, seguindo por essa lógica podemos afirmar que o throughput     seria melhor utilizado com vídeos HD. Se refletirmos melhor realmente na lógica faz mais sentido mas na lógica médica     não, temos uma demanda mais crítica na aplicação do bisturi então a resposta pode ser dividida.
+    A prioridade absoluta tem que ser a alta responsividade para os comandos do bisturi. A lógica médica é a que manda aqui. Um comando do bisturi com atraso, mesmo que pequeno, pode ter uma consequência catastrófica para o paciente. A resposta precisa ser o mais instantânea possível. O vídeo HD (Pablo) precisa de alto throughput, mas ele é mais tolerante a falhas. É muito melhor o vídeo travar por um instante do que o bisturi cortar no lugar errado por causa da latência. A vida do paciente depende da responsividade, enquanto a qualidade da cirurgia depende do throughput. A vida vem sempre em primeiro lugar.
 
 ---
 
@@ -382,8 +381,8 @@ $ns run
 
 | `rate_` Configurado (ErrorModel) | Pacotes UDP Enviados | Pacotes UDP Recebidos | Pacotes Perdidos | Taxa de Perda (%) |
 | :------------------------------- | :------------------- | :-------------------- | :--------------- | :---------------- |
-|  e.g., 1e-2                      | 1504                 | 1120                  | 384              | 25.53%            |
-|  e.g., 1e-5                      | 1520                 | 1119                  | 401              | 26.38%            |
+|  e.g., 1e-2                      | 400                  | 291                   | 109              | 27.25%            |
+|  e.g., 1e-5                      | 400                  | 385                   | 15               | 3.75%             |
 
 **Descrição do Comportamento do TCP:**
 
@@ -393,18 +392,17 @@ $ns run
 
 1.  **Qual protocolo (UDP ou TCP) é mais afetado pela perda de pacotes em termos de entrega final? Por quê?**
 
-    Vamos dividir esse tópico em duas divisões, integridade da entrega final e desempenho, não podemos dizer que um é pior
-    ou melhor sem olhar para esses dois parâmetros. Integridade da entrega, TCP, com certeza ganha, já em velocidade UDP       está na frente mas agora, qual irá sofrer na perda? UDP, ainda mais quando implementado com o envio de bits contínuos,      vai ter um grande problema com perdas, ele não trata os dados, então se a cada segundos a rede perde 50/100 o UDP vai       estar perdendo SEMPRE 50% dos pacotes necessários. O TCP, como sabemos, tem todo o tratamento com inúmeras                 heurísticas para resolver seus problemas, desde os Acks até 3-handshake.
+    Vamos dividir esse tópico em duas divisões: integridade da entrega e desempenho. Em integridade, o TCP com certeza ganha; já em velocidade, o UDP está na frente. Mas qual irá sofrer mais com a perda? O UDP. Como ele não trata os dados, se a rede perde pacotes, eles simplesmente somem para sempre, como vimos na simulação de erro 1e-2, onde mais de 27% dos dados se perderam. O TCP, como sabemos, tem todo o tratamento com inúmeras heurísticas para resolver seus problemas, desde os ACKs até o 3-way handshake, garantindo que tudo chegue ao destino.
     
 3.  **Como a taxa de perda configurada no script (`rate_`) se compara à taxa de perda observada para o UDP?**
 
-    A taxa de perda do UDP irá ser drasticamente maior que a taxa configurada no script. O script está configurado para         que a cada 1 pacote no meio de 100 seja perdido, cada pacote UDP tem 500 bytes, o que equivale a 4000 bytes. Para a        veracidade de todos estarem perfeitos é quase impossível, praticamente zero.
+    A taxa de perda observada no UDP tem uma correlação direta com a taxa de erro configurada. Com uma taxa de erro de bit alta (1e-2), a perda de pacotes foi altíssima, 27.25%. Ao diminuir drasticamente a taxa de erro para 1e-5, a perda de pacotes caiu para apenas 3.75%. A perda de pacotes não é idêntica à taxa de erro de bits porque um único bit com erro já é suficiente para corromper e fazer com que um pacote inteiro de 500 bytes (4000 bits) seja descartado.
     
 5.  **Dê exemplos de aplicações que toleram alta perda de pacotes e aplicações que não toleram nenhuma perda.**
 
-    VoIP, Streaming ao vivo e jogos online: Esses são do time UDP, eles necessitam dos dados chegando a todo momento, é         melhor uma voz travada, um jogo com baixa responsividade do que um sistema completo interrompido atrás de pacotes          velhos.
+    Toleram Perdas (Time UDP): VoIP, Streaming ao vivo e jogos online. Essas aplicações precisam que os dados cheguem rápido e a todo momento. É melhor ter uma voz que falha por um instante ou um jogo com um pequeno "lag" do que interromper tudo para esperar por pacotes antigos que já perderam o sentido.
 
-    Transferência de arquivos, Navegação Web e Emails: Esses são do time TCP, eles necessitam da integridade 100% dos           arquivos, eles têm a possibilidade e versatilidade de poder esperar os pacotes chegarem.
+Não Toleram Perdas (Time TCP): Transferência de arquivos, Navegação Web e E-mails. Essas aplicações precisam de 100% de integridade. Ninguém quer um arquivo corrompido ou um e-mail pela metade. Elas têm a versatilidade de poder esperar os pacotes chegarem, pois a integridade do dado é mais importante que a velocidade.
 
 ---
 
@@ -419,6 +417,7 @@ Durante os experimentos, aprofundamos a distinção entre aplicações em tempo 
 O estudo comparativo entre TCP e UDP foi reforçado, evidenciando suas principais diferenças em relação à confiabilidade e à tolerância na perda de pacotes. A utilização do Wireshark para analisar os protocolos RTP e RTCP foi particularmente reveladora; foi possível observar, em uma chamada real do Google Meet, como o RTCP fornece as métricas de QoS essenciais para o ajuste dinâmico da qualidade, enquanto o RTP se encarrega do transporte seguro e criptografado dos dados.
 
 Por fim, os conceitos de throughput e perda de pacotes foram consolidados, mostrando que o gerenciamento do primeiro é crucial para evitar congestionamentos e que a perda de pacotes é tratada de maneiras distintas por cada protocolo, dependendo dos requisitos da aplicação.
+
 
 
 
