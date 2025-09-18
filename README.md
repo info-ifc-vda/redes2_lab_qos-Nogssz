@@ -280,16 +280,13 @@ $ns run
 | Ping Nº | Timestamp Envio | Timestamp Recebimento | Latência (ms) | Observações sobre o Impacto do FTP |
 | :------ | :-------------- | :-------------------- | :------------ | :--------------------------------- |
 | 1       | 1.0             | 1041ms                | 326.2 ms      | O fluxo FTP já está ativo          |
-| 2       | 1.3             | 1040.6ms              | 328.9 ms      | O pacote Ping precisa esperar na   |
-|         |                 |                       |               | fila atrás dos  pacotes FTP        |                
-| 3       | 1.6             | 1040.3ms              | 328.9 ms      | A latência se mantém em um patamar |
-|         |                 |                       |               | extremamente alto, mostrando que a |
-|         |                 |                       |               | rede está sem responsividade       |
-| 4       | 1.9             | 1040.2ms              | 328.9 ms      | O padrão de alta latência continua |
-|         |                 |                       |               | enquanto o FTP estiver competindo  |
-|         |                 |                       |               | pelos recursos do link             |
+| 2       | 1.3             | 1040.6ms              | 328.9 ms      | O pacote Ping precisa esperar na fila atrás dos  pacotes FTP |                    
+| 3       | 1.6             | 1040.3ms              | 328.9 ms      | A latência se mantém em um patamar extremamente alto, mostrando que a rede está sem responsividade |    
+| 4       | 1.9             | 1040.2ms              | 328.9 ms      | O padrão de alta latência continua enquanto o FTP estiver competindo pelos recursos do link |           
+
 
 ### **7.3. Perguntas para Refletir e Discutir**
+
 
 1.  **Qual aplicação (FTP ou Ping) é mais sensível à latência? Por quê?**
 
@@ -417,6 +414,7 @@ Durante os experimentos, aprofundamos a distinção entre aplicações em tempo 
 O estudo comparativo entre TCP e UDP foi reforçado, evidenciando suas principais diferenças em relação à confiabilidade e à tolerância na perda de pacotes. A utilização do Wireshark para analisar os protocolos RTP e RTCP foi particularmente reveladora; foi possível observar, em uma chamada real do Google Meet, como o RTCP fornece as métricas de QoS essenciais para o ajuste dinâmico da qualidade, enquanto o RTP se encarrega do transporte seguro e criptografado dos dados.
 
 Por fim, os conceitos de throughput e perda de pacotes foram consolidados, mostrando que o gerenciamento do primeiro é crucial para evitar congestionamentos e que a perda de pacotes é tratada de maneiras distintas por cada protocolo, dependendo dos requisitos da aplicação.
+
 
 
 
